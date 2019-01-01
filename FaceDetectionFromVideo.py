@@ -13,7 +13,7 @@ import math
 # ex. 'C:\\Users\\bfurm\\Anaconda3\\pkgs\\libopencv-3.4.1-h875b8b8_3\\Library\\etc\\haarcascades\\'
 LOCAL_PATH_TO_HAARCASCADES = 'C:\\Users\\bfurm\\Anaconda3\\pkgs\\libopencv-3.4.1-h875b8b8_3\\Library\\etc\\haarcascades\\'
 
-DELAY_BETWEEN_FRAMES_MILLISECONDS = 77  # 30 for smoothness, but it is a cpu workout
+DELAY_BETWEEN_FRAMES_MILLISECONDS = 47  # 30 for smoothness, but it is a cpu workout
 
 # global variable that turns off main loop
 running = True
@@ -41,7 +41,7 @@ def start():
 		# detect stuff with detectMultiScale(image, rejectLevels, levelweights?)
 		faces = face_cascade.detectMultiScale(gray_image, 1.35, 4)  # faces = face_cascade.detectMultiScale(gray_image, 1.3, 5)
 		
-		most_centered_face = None  #(x, y, w, h)
+		most_centered_face = None  # (x, y, w, h) tuple
 		most_centered_face_dist_to_center = None
 		
 		for (x, y, w, h) in faces:
@@ -57,7 +57,7 @@ def start():
 			# search for eyes inside the face: the region of interest
 			roi_gray = gray_image[y:y+h,x:x+w]
 			roi_color = image[y:y+h, x:x+w]
-			eyes = eye_cascade.detectMultiScale(roi_gray, 1.1)  # eyes = eye_cascade.detectMultiScale(roi_gray)
+			eyes = eye_cascade.detectMultiScale(roi_gray, 1.25)  # eyes = eye_cascade.detectMultiScale(roi_gray)
 			for (ex,ey,ew,eh) in eyes:
 				cv2.rectangle(roi_color, (ex,ey), (ex+ew,ey+eh), (0,255,0), 2)
 			
