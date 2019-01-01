@@ -11,9 +11,9 @@ import math
 
 # local path to where OpenCV haarcascades are saved 
 # ex. (Windows 10 Anocanda):  'C:\\Users\\bfurm\\Anaconda3\\pkgs\\libopencv-3.4.1-h875b8b8_3\\Library\\etc\\haarcascades\\'
-LOCAL_PATH_TO_HAARCASCADES = '/haarcascades/'
+LOCAL_PATH_TO_HAARCASCADES = 'haarcascades/'
 
-DELAY_BETWEEN_FRAMES_MILLISECONDS = 47  # 30 for smoothness, but it is a cpu workout
+DELAY_BETWEEN_FRAMES_MILLISECONDS = 111  # 30 for smoothness on laptop, but it is a cpu workout
 
 # global variable that turns off main loop
 running = True
@@ -36,7 +36,7 @@ def start():
         # get the image and grayscale image from the video
         successful, image = video_capture.read()
 
-        # image = cv2.imread('med.jpg')     #TEMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        # image = cv2.imread('far.jpg')     #TEMP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         # detect stuff with detectMultiScale(image, rejectLevels, levelweights?)
@@ -44,6 +44,7 @@ def start():
         
         most_centered_face = None  # (x, y, w, h) tuple
         most_centered_face_dist_to_center = None
+        
         
         for (x, y, w, h) in faces:
             cv2.rectangle(image, (x, y), (x+w, y+h), (255,0,0), 4) #(x,y) is starting point, (x+w,y+h) is the ending point, (255,0,0) blue color, 2 is thickness
@@ -55,12 +56,14 @@ def start():
                 most_centered_face = (x, y, w, h)
                 most_centered_face_dist_to_center = dist_to_center_screen
             
+            '''
             # search for eyes inside the face: the region of interest
             roi_gray = gray_image[y:y+h,x:x+w]
             roi_color = image[y:y+h, x:x+w]
             eyes = eye_cascade.detectMultiScale(roi_gray, 1.25)  # eyes = eye_cascade.detectMultiScale(roi_gray)
             for (ex,ey,ew,eh) in eyes:
                 cv2.rectangle(roi_color, (ex,ey), (ex+ew,ey+eh), (0,255,0), 2)
+            '''
             
         # draw the line to the center of the most centered face
         if most_centered_face is not None:
@@ -89,10 +92,10 @@ def start():
         '''
     
         # resize the window if it is too big
-        image = imutils.resize(image, width=min(550, image.shape[1]))
+        image = imutils.resize(image, width=min(500, image.shape[1]))
             
         # show the image, then waits the DELAY_BETWEEN_FRAMES_MILLISECONDS
-        cv2.imshow('image',image)
+        cv2.imshow('Video',image)
         k = cv2.waitKey(DELAY_BETWEEN_FRAMES_MILLISECONDS) & 0xff
         if k == 27:  # Ends on the esc key
             stop()
