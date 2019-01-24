@@ -11,11 +11,11 @@ import math
 
 # local path to where OpenCV haarcascades are saved 
 # ex. (Windows 10 Anocanda):  'C:\\Users\\bfurm\\Anaconda3\\pkgs\\libopencv-3.4.1-h875b8b8_3\\Library\\etc\\haarcascades\\'
-LOCAL_PATH_TO_HAARCASCADES = 'haarcascades/'
+LOCAL_PATH_TO_HAARCASCADES = 'resources/haarcascades/'
 
 DELAY_BETWEEN_FRAMES_MILLISECONDS = 111  # 30 for smoothness on laptop, but it is a cpu workout
+FRAMES_TO_LOCK_ONTO_FACE = 7
 
-# global variable that turns off main loop
 running = True
 
 
@@ -29,6 +29,8 @@ def start():
 
     # get the video from the main camera
     video_capture = cv2.VideoCapture(0)
+	
+    frames_in_a_row_with_face = 0
 
     # analyze frames coming in from video
     while running:
@@ -44,10 +46,18 @@ def start():
         
         most_centered_face = None  # (x, y, w, h) tuple
         most_centered_face_dist_to_center = None
+		
+        if len(faces) > 0:
+            frames_in_a_row_with_face += 1
+        else:
+            frames_in_a_row_with_face = 0
         
         
         for (x, y, w, h) in faces:
-            cv2.rectangle(image, (x, y), (x+w, y+h), (255,0,0), 4) #(x,y) is starting point, (x+w,y+h) is the ending point, (255,0,0) blue color, 2 is thickness
+            if frames_in_a_row_with_face >= FRAMES_TO_LOCK_ONTO_FACE:  # different color when locked on
+                cv2.rectangle(image, (x, y), (x+w, y+h), (255,0,0), 4)  #(x,y) is starting point, (x+w,y+h) is the ending point, (255,0,0) blue color, 2 is thickness
+            else:
+                cv2.rectangle(image, (x, y), (x+w, y+h), (122,0,0), 4) 
             
             # distance to center of image from center of face rectangle
             x_center, y_center = center(x,y,w,h)
@@ -103,14 +113,16 @@ def start():
     video_capture.release()
     cv2.destroyAllWindows()
 
-    
+
 def stop():
     global running
     running = False
 
+	
+# called when
+def targetDetected():
+	pass
 
-
-# helper functions:
 
 # get the center of a rectangle
 def center(x, y, w, h):
